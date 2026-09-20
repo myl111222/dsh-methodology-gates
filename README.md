@@ -76,6 +76,37 @@ Sources are recorded per entry and shown by `action=show`:
 
 Merged entries keep their provenance in the `src` field, so nothing is silently dropped when two entries are folded together.
 
+## How this was verified
+
+Nothing here is asserted because it looked right. In the order it happened:
+
+| Step | Method | Result |
+|---|---|---|
+| Unit / retrieval | `node test/smoke.mjs` — 39 assertions over lookup, family resolution, situation routing and the generated prompt section | 39 passed, 0 failed |
+| **Mutation testing** | 14 deliberate breakages of `lib/index.js`, each one a real past regression (the first-match phase bug, the alias table, the version tag, the `inject` list, the generated section, …), re-run against the suite | **14 killed, 0 survived** — i.e. the suite is able to fail |
+| Adversarial review | A separate context that did not implement it, given only the contract, acceptance criteria and the artifact, required to attach `file:line` evidence | Two rounds, 9 findings, all closed and turned into regression cases |
+| Live self-check | Every `route` / `list` answer begins with `[mth@<version>]`, so “which build answered me” is never inferred | `[mth@0.1.6]` while the installed version is `0.1.6` |
+
+Run the suite against any build with `MTHD_BASE`:
+
+```sh
+MTHD_BASE=file:///path/to/dsh-methodology-gates/lib/index.js node test/smoke.mjs
+```
+
+The default points at a Windows profile install, because the module needs `@deepseek-ai/dsh-tools` resolvable — which is why it is tested where it is installed rather than from the source directory.
+
+### The one thing that is NOT verified
+
+The always-on section costs **694 characters (~511 tokens) on every step of every session**, and there is **no evidence yet that it changes behaviour**: self-initiated use of the tool measured ≈ 0 (39 calls, all of them a verification run).
+
+The cost is measured. The benefit is not.
+
+So the decision rule is written down **before** the data arrives, so that it cannot be rationalised afterwards:
+
+> One week after the 0.1.6 install, run the usage meter over the newest session logs. If `methodology` is still called ≈ 0 times in real work, **delete the always-on section** (keep the tool and the command) and re-measure.
+
+An ablation whose outcome is decided after seeing the numbers is not an ablation.
+
 ## License
 
 MIT
