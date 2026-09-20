@@ -1,6 +1,6 @@
 {
   "name": "dsh-methodology-gates",
-  "version": "0.1.1",
+  "version": "0.1.6",
   "description": "Methodology gates for DeepSeek Harness: 8 always-on agent-work trigger words (first principles, adversarial review, ablation, Occam's razor, list your uncertainties, independent judgment, critical thinking, high cohesion / low coupling) plus a 36-entry, 6-family on-demand catalog — delivered as a prompt section, a `methodology` model tool, and a `/methodology` human command.",
   "type": "module",
   "license": "MIT",
