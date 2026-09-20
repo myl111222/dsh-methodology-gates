@@ -1,0 +1,10 @@
+# dependencies
+node_modules/
+
+# packed artifacts (rebuild with `pnpm pack`)
+*.tgz
+
+# logs and OS noise
+*.log
+.DS_Store
+Thumbs.db

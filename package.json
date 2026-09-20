@@ -1,0 +1,38 @@
+{
+  "name": "dsh-methodology-gates",
+  "version": "0.1.0",
+  "description": "Methodology gates for DeepSeek Harness: 8 always-on agent-work trigger words (first principles, adversarial review, ablation, Occam's razor, list your uncertainties, independent judgment, critical thinking, high cohesion / low coupling) plus a 36-entry, 6-family on-demand catalog — delivered as a prompt section, a `methodology` model tool, and a `/methodology` human command.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "keywords": [
+    "deepseek-harness",
+    "deepseek-harness-plugin",
+    "dsh-plugin",
+    "methodology",
+    "mental-models",
+    "agent-workflow"
+  ],
+  "peerDependencies": {
+    "@deepseek-ai/cordis": ">=4.0.0",
+    "@deepseek-ai/dsh-tools": ">=0.1.0-rc.6"
+  }
+}

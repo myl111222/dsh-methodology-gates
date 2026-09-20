@@ -1,0 +1,10 @@
+# dsh-methodology-gates bundle patch: the layer applied when a profile lists this bundle.
+# The row references the package by name, so Node resolution finds the installed code
+# (lib/index.js on the host). This package publishes no service, so it needs no isolate
+# realm and can sit loose in the composition. It has no client half by design: the
+# browser card wall would have to duplicate the 36-entry table or invent a transport,
+# and the three host capabilities are what the capability actually runs on.
+
+- insert:
+    - id: methodology-gates
+      name: dsh-methodology-gates

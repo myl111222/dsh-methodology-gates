@@ -1,0 +1,6 @@
+# Normalise line endings in the repository; the working copy may use CRLF on
+# Windows but every committed blob stays LF, including cordis.patch.yml, which
+# the harness reads as a composition patch.
+* text=auto eol=lf
+
+*.tgz binary
