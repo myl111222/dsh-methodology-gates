@@ -60,9 +60,10 @@ Each entry carries: when to use it · the steps · the artifact it must produce 
 
 ## Design notes
 
-- **Always-on cost is bounded and constant.** Only the 8 trigger words are injected; the other 28 live in the catalog. Every count in the injected text and tool description is *computed from the table*, so adding entries cannot desynchronise them.
-- **`route` is a phase machine.** It reads the task text and returns the gates for `design` / `implement` / `debug` / `deliver`, defaulting to the full pipeline.
-- **Fuzzy matches announce themselves.** A lookup that only matched a `when` clause says so and lists the other candidates, instead of quietly returning whichever row happens to come first.
+- **All 36 are equal; the scenario decides.** The always-on section names **no** methodology — a privileged subset would be a ranking the data does not support. What stays resident is the *selection mechanism* (the trigger that makes the choice happen) plus the one rule that cannot be satisfied by thinking. Measured cost: **501 characters (~366 tokens) per step per session**, against 694 (~511) for the earlier 13-name map and ~1943 (~1473) if all 36 were injected.
+- **`route` selects by situation, not by rank.** It matches the task against every entry's own `when` (plus an alias list for colloquial phrasings), reports the matched terms, and separates *phase gates* from *wording hits*. Phase detection collects **every** matching phase rather than the first one, so a task that says both “重构” and “上线” cannot lose its delivery gates.
+- **Fuzzy matches announce themselves.** A lookup that only matched a `when` clause, or a substring that matches several entries, says so and lists the alternatives, instead of quietly returning whichever row happens to come first.
+- **The two hard gates are a rule, not a ranking.** 对抗式审查 needs a context that did not implement; 消融实验 needs a baseline and a real re-run. Those two cannot be done inside one head, so the section names them — and only them.
 - **No client half, by design.** A browser card wall would have to duplicate the 36-entry table or invent a transport; the three host capabilities are what the gates actually run on.
 
 ## Provenance
@@ -85,7 +86,7 @@ Nothing here is asserted because it looked right. In the order it happened:
 | Unit / retrieval | `node test/smoke.mjs` — 39 assertions over lookup, family resolution, situation routing and the generated prompt section | 39 passed, 0 failed |
 | **Mutation testing** | 14 deliberate breakages of `lib/index.js`, each one a real past regression (the first-match phase bug, the alias table, the version tag, the `inject` list, the generated section, …), re-run against the suite | **14 killed, 0 survived** — i.e. the suite is able to fail |
 | Adversarial review | A separate context that did not implement it, given only the contract, acceptance criteria and the artifact, required to attach `file:line` evidence | Two rounds, 9 findings, all closed and turned into regression cases |
-| Live self-check | Every `route` / `list` answer begins with `[mth@<version>]`, so “which build answered me” is never inferred | `[mth@0.1.6]` while the installed version is `0.1.6` |
+| Live self-check | Every `route` / `list` answer begins with `[mth@<version>]`, so “which build answered me” is never inferred | `[mth@0.2.0]` while the installed version is `0.2.0` |
 
 Run the suite against any build with `MTHD_BASE`:
 
@@ -97,13 +98,24 @@ The default points at a Windows profile install, because the module needs `@deep
 
 ### The one thing that is NOT verified
 
-The always-on section costs **694 characters (~511 tokens) on every step of every session**, and there is **no evidence yet that it changes behaviour**: self-initiated use of the tool measured ≈ 0 (39 calls, all of them a verification run).
+The always-on section costs **501 characters (~366 tokens) on every step of every session**, and there is **no evidence yet that it changes behaviour**: self-initiated use of the tool measured ≈ 0 (39 calls, all of them a verification run).
 
 The cost is measured. The benefit is not.
 
-So the decision rule is written down **before** the data arrives, so that it cannot be rationalised afterwards:
+So the comparison and its decision rule are written down **before** the data arrives, so that they cannot be rationalised afterwards:
 
-> One week after the 0.1.6 install, run the usage meter over the newest session logs. If `methodology` is still called ≈ 0 times in real work, **delete the always-on section** (keep the tool and the command) and re-measure.
+| Variant | Always-on content | Cost | Status |
+|---|---|---|---|
+| **A** | a 13-name situation map (8 from the slide deck + 5 pointers) | 694 chars (~511 tok) | retired — see below |
+| **B** | **zero names**: the selection mechanism + the two hard gates | **501 chars (~366 tok)** | current (0.2.0) |
+| **C** | B's text plus a session-event hook that injects the gates by itself | ~501 chars + hook | not built |
+
+A was retired on a *measured* saving, not on a taste: the 13-name map's membership came from a slide deck rather than from evidence, while its cost was real and its benefit unmeasured. B is strictly cheaper and strictly more neutral.
+
+> One week after the 0.2.0 install, run the usage meter over the newest session logs.
+> **B ≥ A** → keep B (cheaper and more neutral — it wins either way).
+> **B < A** → concrete situation hooks trigger behaviour better than an abstract instruction, so build **C** (make the trigger a mechanism, not a sentence).
+> **Both ≈ 0** → the prompt layer cannot move behaviour at all; go to C or drop the always-on section entirely.
 
 An ablation whose outcome is decided after seeing the numbers is not an ablation.
 
